@@ -29,6 +29,12 @@ class PromotionCog(commands.Cog):
                     print(f"Promoting {member.display_name} from {old_role} to {new_role}")
                     await member.remove_roles(old)
                     await member.add_roles(new)
+                    # If promoting from Class 12 to Passout, remove Active Member role if present
+                    if old_role == "Class 12" and new_role == "Passout":
+                        active_role = discord.utils.get(guild.roles, name="Active Member")
+                        if active_role and active_role in member.roles:
+                            await member.remove_roles(active_role, reason="Graduated to Passout")
+                            print(f"Removed 'Active Member' from {member.display_name} (now Passout)")
                     promoted_count += 1
                     break  # Stop after first promotion
         print(f"Total promoted: {promoted_count}")
